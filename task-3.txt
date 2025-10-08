@@ -1,4 +1,52 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No:250542024 
+AD-SOYAD:Sarya Su Toğyıldız
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+
+ALGORİTMA MuzikKoleksiyonunuDüzenle
+
+GİRDİ:
+    MüzikKlasörü = Müzik dosyalarının bulunduğu ana klasör
+    Kriterler = { Tür, Sanatçı, Albüm, Yıl, RuhHali }
+
+ÇIKTI:
+    Düzenli, kategorilere ayrılmış müzik arşivi
+
+ADIMLAR:
+
+1. BAŞLAT
+
+2. MüzikKlasörü içindeki TÜM dosyaları tara:
+       DosyaListesi ← Tüm .mp3, .wav, .flac uzantılı dosyalar
+
+3. HER dosya için:
+       a. MetaVeri ← OkuID3Etiketi(Dosya)
+          // ID3 etiketi: sanatçı, tür, albüm, yıl bilgilerini içerir
+       
+       b. Eğer MetaVeri eksikse:
+              MetaVeri ← DosyaAdınıÇözümle(Dosya)
+              // Örn: “Tarkan - Şımarık (1997).mp3” → Sanatçı=Tarkan, Yıl=1997
+
+       c. TürKlasörü ← MüzikKlasörü + "/" + MetaVeri.Tür
+          Eğer TürKlasörü yoksa → Oluştur(TürKlasörü)
+
+       d. SanatçıKlasörü ← TürKlasörü + "/" + MetaVeri.Sanatçı
+          Eğer SanatçıKlasörü yoksa → Oluştur(SanatçıKlasörü)
+
+       e. AlbümKlasörü ← SanatçıKlasörü + "/" + MetaVeri.Albüm
+          Eğer AlbümKlasörü yoksa → Oluştur(AlbümKlasörü)
+
+       f. Dosyayı hedef klasöre taşı:
+              Taşı(Dosya, AlbümKlasörü)
+
+4. (İSTEĞE BAĞLI) Ruh hâline göre liste oluştur:
+       Kullanıcıdan RuhHali seç: (örnek: mutlu, üzgün, enerjik)
+       RuhListesi ← Tür veya tempo bilgisine göre filtrele
+       OynatmaListesiOluştur(RuhListesi)
+
+5. Tüm işlemler bitince:
+       “Müzik koleksiyonu başarıyla düzenlendi.” mesajı göster.
+
+6. BİTİR
+
+SON ALGORİTMA
