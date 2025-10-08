@@ -2,131 +2,69 @@
 AD-SOYAD:Sarya Su Toğyıldız
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+ALGORİTMA Mükemmel_Omlet_Yap
 
-STRUCT Card:
-    color          # "red", "blue", "green", "yellow", or "wild"
-    value          # 0-9, "skip", "reverse", "+2", "wild", "+4"
+BAŞLA
 
-STRUCT Player:
-    name
-    hand[]         # eldeki kartlar
-    strategy_type  # agresif / savunmacı / dengeli
-    memory         # rakip tahmin bilgisi (color frequency, last actions)
+    // 1. Malzemeleri hazırlama
+    OLUŞTUR kase
+    YUMURTALARI_KIR(kase, Yumurta_sayisi)
+    EKLE(kase, Tuz_miktari)
+    EKLE(kase, Süt_miktari)     // yumuşaklık için isteğe bağlı
+    Karışım_homojen_mi ← FALSE
 
-STRUCT GameState:
-    deck[]           # kalan kartlar
-    discard_pile[]   # atılan kartlar
-    players[]
-    direction        # "clockwise" or "counterclockwise"
-    turn_index
-    current_color
-    current_value
-FUNCTION next_turn(state):
-    IF state.direction == "clockwise":
-        state.turn_index = (state.turn_index + 1) MOD length(state.players)
-    ELSE:
-        state.turn_index = (state.turn_index - 1 + length(state.players)) MOD length(state.players)
+    // 2. Karışımı çırpma
+    WHILE Karışım_homojen_mi = FALSE DO
+        ÇIRP(kase)
+        EĞER KARIŞIM_HOMOJEN(kase) İSE
+            Karışım_homojen_mi ← TRUE
+        SON
+    ENDWHILE
 
-FUNCTION can_play(card, state):
-    RETURN (card.color == state.current_color) OR
-           (card.value == state.current_value) OR
-           (card.color == "wild")
+    // 3. Tavayı hazırlama
+    ISIT(tava, Tava_sicakligi)
+    EKLE(tava, Tereyagi_miktari)
+    BEKLE(30 saniye)
+    EĞER YAĞ_YANIYOR İSE
+        SICAKLIK_AZALT(tava)
+    SON
 
-FUNCTION apply_card_effect(card, state):
-    IF card.value == "reverse":
-        state.direction = flip_direction(state.direction)
-    IF card.value == "skip":
-        next_turn(state)
-    IF card.value == "+2":
-        target = next_player(state)
-        draw_cards(target, 2)
-    IF card.value == "+4":
-        target = next_player(state)
-        draw_cards(target, 4)
-FUNCTION ai_choose_card(state, player):
-    playable_cards = FILTER player.hand WHERE can_play(card, state)
+    // 4. Karışımı tavaya dökme
+    DÖK(tava, kase_karışımı)
+    BEKLE(10 saniye)
 
-    IF playable_cards IS EMPTY:
-        RETURN DRAW_CARD
+    // 5. Omleti şekillendirme ve pişirme
+    TEKRARLA
+        SPATULA_ILE(Kenarları_İçe_İt)
+        EĞİM_VER(tava)
+        AKIŞKAN_KISIM_BOŞLUĞA_AKSIN
+    UNTIL ALT_KISIM_ALTIN_RENGİ_ALDI
 
-    best_card = null
-    best_score = -INF
+    // 6. İç malzeme ekleme (isteğe bağlı)
+    EĞER Ic_malzeme ≠ BOŞ İSE
+        EKLE(omletin_yarısı, Ic_malzeme)
+        KATLA(omlet, İkiye)
+    SON
 
-    FOR card IN playable_cards:
-        value_score = evaluate_card_value(card)
-        color_score = match_color_preference(player, card)
-        block_score = predict_opponent_reaction(state, player, card)
-        risk_score = estimate_risk(player, card)
-        total = value_score + color_score + block_score - risk_score
-        IF total > best_score:
-            best_score = total
-            best_card = card
+    // 7. Son pişirme kontrolü
+    EĞER ÜST_KISIM_HAFİF_NEMLİ İSE
+        BEKLE(20–30 saniye)
+    SON
 
-    RETURN best_card
-FUNCTION evaluate_card_value(card):
-    IF card.value IN ["+4", "+2"]:
-        RETURN 30
-    IF card.value IN ["skip", "reverse"]:
-        RETURN 15
-    IF card.value == "wild":
-        RETURN 10
-    RETURN card.value * 1.0   # sayı kartıysa
+    // 8. Servis
+    AL(tava, omlet)
+    SÜSLE(omlet, karabiber + maydanoz)
+    SERVİS_ET(omlet)
 
-FUNCTION match_color_preference(player, card):
-    # Elinde o renkten çok varsa, o rengi oyna (elde çeşitliliği azaltma)
-    color_count = count_color(player.hand, card.color)
-    RETURN -color_count * 2
+    // 9. Son kontrol
+    EĞER ALT_YANIK_DEĞİL VE DOKU_YUMUŞAK İSE
+        Omlet_durumu ← “Mükemmel omlet hazır 🍳”
+    DEĞİLSE
+        Omlet_durumu ← “Isı veya pişirme süresi ayarlanmalı.”
+    SON
 
-FUNCTION estimate_risk(player, card):
-    # UNO’ya yaklaşmışsan, özel kartı saklamak daha mantıklı
-    IF length(player.hand) <= 2 AND card.value IN ["+4", "skip"]:
-        RETURN 25
-    RETURN 0
-FUNCTION update_opponent_memory(state, player):
-    FOR opponent IN state.players:
-        IF opponent != player:
-            last_play = opponent.last_played_card
-            player.memory[opponent].color_trend[last_play.color] += 1
-            player.memory[opponent].special_usage[last_play.value] += 1
+    YAZ(Omlet_durumu)
 
-FUNCTION predict_opponent_reaction(state, player, card):
-    opponent = next_player(state)
-    predicted_color = most_common_color(player.memory[opponent])
-    IF card.color == predicted_color:
-        RETURN -10   # rakibin işine yarayabilir
-    IF card.value IN ["skip", "+2", "+4"]:
-        RETURN +20   # rakibi yavaşlatır
-    RETURN 0
-FUNCTION choose_wild_color(player):
-    # Elinde en çok olan rengi seç
-    color_counts = count_each_color(player.hand)
-    RETURN color_with_max_value(color_counts)
-INITIALIZE state = setup_game()
-WHILE not game_over(state):
-    current = state.players[state.turn_index]
+BİTİR
 
-    IF current.is_ai:
-        update_opponent_memory(state, current)
-        chosen = ai_choose_card(state, current)
-
-        IF chosen == DRAW_CARD:
-            drawn = draw_one(state, current)
-            IF can_play(drawn, state):
-                chosen = drawn
-            ELSE:
-                next_turn(state)
-                CONTINUE
-
-        play_card(current, chosen, state)
-        apply_card_effect(chosen, state)
-        IF chosen.color == "wild":
-            state.current_color = choose_wild_color(current)
-    ELSE:
-        human_turn(state, current)
-
-    IF length(current.hand) == 0:
-        winner = current
-        BREAK
-
-    next_turn(state)
-DECLARE winner.name AS champion
+SON ALGORİTMA
