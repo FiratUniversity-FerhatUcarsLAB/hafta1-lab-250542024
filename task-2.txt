@@ -9,7 +9,7 @@ STRUCT Card:
 
 STRUCT Player:
     name
-    hand[]         # eldeki kartlar
+    hand[]         # eldeki kartlar 
     strategy_type  # agresif / savunmacı / dengeli
     memory         # rakip tahmin bilgisi (color frequency, last actions)
 
