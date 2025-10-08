@@ -1,4 +1,42 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No:250542024
+AD-SOYAD:Sarya Su Toğyıldız
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+
+ALGORITHM FairCakeDivision(N)
+
+    INPUT: N kişilik grup
+    OUTPUT: Her kişinin kendi adil bulduğu bir pasta dilimi
+
+    1. Başlat: 
+         Cake ← [0, 1]
+         Cuts ← ∅
+         Pieces ← ∅
+
+    2. HER kişi i için:
+         Her kişi pastayı N eşit değerli gördüğü dilimlere bölmek için
+         kendi değer fonksiyonuna göre (Value[i]) kesim noktalarını önerir:
+         Proposal[i] ← önerilen (N-1) kesim noktaları
+
+    3. Tüm önerileri birleştir ve ortalama al:
+         GlobalCuts ← ORTALAMA(Proposal[1..N])
+         Pieces ← böl(Cake, GlobalCuts)
+         // Yani pastayı ortalama kesimlere göre dilimlere ayır.
+
+    4. Atama süreci:
+         Her kişi her dilimi 0–1 arasında puanlar:
+             Score[i][j] ← Value[i](Piece[j])
+
+    5. Adil atama yap:
+         Herkesin “en değerli bulduğu” dilim çakışmasız olacak şekilde 
+         dilimleri kişilere atamak için Maksimum Eşleşme (Hungarian Algorithm) uygula:
+             Assignment ← MAX_MATCH(Score)
+
+    6. HER kişi i için:
+         Kişi i’ye AssignedPiece[i] ← Assignment[i] dilimini ver
+
+    7. SONUÇ:
+         Her kişi kendi değer yargısına göre adil pay almış olur.
+
+    RETURN AssignedPiece
+END ALGORITHM
