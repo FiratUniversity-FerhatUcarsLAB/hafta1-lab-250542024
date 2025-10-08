@@ -1,4 +1,52 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No:250542024
+AD-SOYAD:Sarya Su Toğyıldız
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+
+ALGORITHM EnergyBasedPlanner
+
+INPUT:
+    Tasks = { (Name, Priority, Difficulty, Duration) }
+    EnergyLevel = Kullanıcının girdiği 1–10 arası başlangıç enerjisi
+    TimeSlots = Günün zaman dilimleri (örneğin sabah, öğle, akşam)
+
+OUTPUT:
+    Günün enerjiye göre optimize edilmiş görev planı
+
+STEPS:
+
+1. Başlat:
+       CurrentEnergy ← EnergyLevel
+       Plan ← ∅
+
+2. Görev puanını hesapla:
+       HER görev için:
+           TaskScore ← (Priority * 2) - Difficulty
+
+3. Görevleri sıralama:
+       Eğer CurrentEnergy > 7 ise:
+            Görevleri TaskScore’a göre yüksekten düşüğe sırala
+       Eğer 4 ≤ CurrentEnergy ≤ 7 ise:
+            Orta zorluklu görevleri (3–6 arası) önceliklendir
+       Eğer CurrentEnergy < 4 ise:
+            Düşük zorluklu görevleri (≤ 3) önceliklendir
+
+4. Plan oluştur:
+       Sıralanan görevleri TimeSlots’a sırayla ata
+       Plan ← AssignedTasks
+
+5. Gün boyunca:
+       HER tamamlanan görev sonrası:
+           Kullanıcıdan geri bildirim al:
+               Eğer “çok yoruldum” ise CurrentEnergy -= 1
+               Eğer “iyi hissediyorum” ise CurrentEnergy += 1
+           Yeni CurrentEnergy değerine göre planı güncelle:
+               Görevleri yeniden sırala (3. adıma dön)
+
+6. Gün sonunda:
+       Verimlilik raporu oluştur:
+           En çok tamamlanan görev → en verimli zaman dilimi
+           Ortalama EnergyLevel → günlük enerji dengesi
+
+RETURN Plan, Gün Sonu Raporu
+END ALGORITHM
